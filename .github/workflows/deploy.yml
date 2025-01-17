@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 4cd41e4 (🚀 Add GitHub Actions for EC2 deployment)
 name: 🚀 Deploy to AWS EC2
 
 on:
