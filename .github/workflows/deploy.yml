@@ -1,26 +1,33 @@
-name: Deploy to AWS EC2
+name: 🚀 Deploy to AWS EC2
 
 on:
   push:
     branches:
-      - main  # 仅当推送到 main 分支时触发
+      - main  # 监听 main 分支的 push 事件
 
 jobs:
   deploy:
+    name: Deploy to AWS EC2
     runs-on: ubuntu-latest
 
     steps:
-    - name: 🚀 Checkout Code
-      uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-    - name: 📡 Deploy to EC2
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        script: |
-          cd ~/music-app-backend
-          git pull origin main
-          npm install
-          pm2 restart music-app
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AWS_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.AWS_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy Application
+        run: |
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.AWS_HOST }} << 'EOF'
+            cd ~/music-app-backend
+            git pull origin main
+            npm install
+            pm2 restart music-app || pm2 start src/index.js --name music-app
+            pm2 save
+          EOF
+
