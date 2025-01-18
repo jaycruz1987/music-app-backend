@@ -1,3 +1,4 @@
+
 const db = require('../models/db'); // 确保数据库连接正确
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -67,4 +68,9 @@ exports.getUsers = async (req, res) => {
         console.error('❌ Fetching Users Error:', err);
         res.status(500).json({ message: 'Error fetching users.' });
     }
+};
+
+
+exports.test = (req, res) => {
+    res.json({ message: "User Controller is working!" });
 };
