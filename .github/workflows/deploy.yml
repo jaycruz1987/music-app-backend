@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-=======
 
-
->>>>>>> 4cd41e4 (🚀 Add GitHub Actions for EC2 deployment)
 name: 🚀 Deploy to AWS EC2
 
 on:
@@ -22,17 +18,17 @@ jobs:
       - name: Setup SSH Key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.AWS_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.AWS_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.AWS_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy Application
         run: |
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.AWS_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${{ secrets.AWS_HOST }} << 'EOF'
             cd ~/music-app-backend
             git pull origin main
             npm install
-            pm2 restart music-app || pm2 start src/index.js --name music-app
+            pm2 startOrRestart src/index.js --name music-app
             pm2 save
           EOF
 
