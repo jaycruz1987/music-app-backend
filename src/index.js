@@ -57,3 +57,10 @@ app.use((err, req, res, next) => {
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`✅ Server is running on http://0.0.0.0:${PORT} (accessible from external)`);
 });
+
+app.post('/webhook', express.json(), (req, res) => {
+    console.log("✅ Received GitHub Webhook:", req.body);
+    res.status(200).json({ message: "Webhook received successfully!" });
+
+    // 这里可以添加自动拉取代码、重启服务的逻辑
+});
